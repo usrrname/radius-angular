@@ -1,13 +1,13 @@
 # Runs after merge to main
 
 trigger:
-- main
+  - main
 
 variables:
-- group: radius-angular
+  - group: radius-angular
 
 jobs:
-  - job: setup_build
+  - job: setup_build_publish
     pool:
       vmImage: ubuntu-latest
       steps:
@@ -21,21 +21,11 @@ jobs:
               npm run test
               npm run build:ds
           displayName: "Install lint, test, build DS"
-  - job: audit
-    steps:
-      - task: Npm@1
-        displayName: 'npm audit'
-        inputs:
-          command: custom
-          customCommand: 'audit --registry=https://registry.npmjs.org/'
-      - task: PublishPipelineArtifact@1
-        inputs:
-          targetPath: $(System.DefaultWorkingDirectory)/bin/dist
-          artifactName: )/bin/dist
-        displayName: "Publish dist artifact"
-  - job: publish
-    steps:
-    - task: PowerShell@2
-      inputs:
-        targetType: 'inline'
-        script: 'cd dist/ && npm pack && npm publish'
+        - task: CopyFiles@2
+          displayName: "Copy scripts"
+          inputs:
+            contents: "./dist/**"
+            targetFolder: "$(Build.ArtifactStagingDirectory)"
+        - publish: "$(Build.ArtifactStagingDirectory)/dist"
+          displayName: "Publish DS"
+          artifact: drop
