@@ -1,32 +1,41 @@
 # Runs after merge to main
+
 trigger:
-  - main
+- main
 
-# Environment variables
 variables:
-  - group: radius-angular
+- group: radius-angular
 
-pool:
-  vmImage: ubuntu-latest
-
-  steps:
-    - task: NodeTool@0
-      inputs:
-        versionSpec: "14.x"
-        displayName: "Install Node.js"
-        script: |
-          npm ci
-          npm run lint
-          npm run test
-          npm run build:ds
-      displayName: "Install lint, test, build DS"
-
-    - task: PublishPipelineArtifact@1
-      inputs:
-        targetPath: $(System.DefaultWorkingDirectory)/bin/dist
-        artifactName: )/bin/dist
+jobs:
+  - job: setup_build
+    pool:
+      vmImage: ubuntu-latest
+      steps:
+        - task: NodeTool@0
+          inputs:
+            versionSpec: "14.x"
+            displayName: "Install Node.js"
+            script: |
+              npm ci
+              npm run lint
+              npm run test
+              npm run build:ds
+          displayName: "Install lint, test, build DS"
+  - job: audit
+    steps:
+      - task: Npm@1
+        displayName: 'npm audit'
+        inputs:
+          command: custom
+          customCommand: 'audit --registry=https://registry.npmjs.org/'
+      - task: PublishPipelineArtifact@1
+        inputs:
+          targetPath: $(System.DefaultWorkingDirectory)/bin/dist
+          artifactName: )/bin/dist
         displayName: "Publish dist artifact"
-
-    - task: PowerShell
-      script: cd dist/ && npm pack && npm publish
-      displayName: "Publish on npm"
+  - job: publish
+    steps:
+    - task: PowerShell@2
+      inputs:
+        targetType: 'inline'
+        script: 'cd dist/ && npm pack && npm publish'
