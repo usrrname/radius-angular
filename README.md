@@ -1,6 +1,12 @@
-# RadiusAngular
+# Radius Angular
 
 This project was generated with [Angular CLI](https://github.com/angular/angular-cli) version 12.0.3.
+
+[![Build Status](https://dev.azure.com/radius2/radius-azure/_apis/build/status/usrrname.radius-angular?branchName=refs%2Fpull%2F2%2Fmerge)](https://dev.azure.com/radius2/radius-azure/_build/latest?definitionId=1&branchName=refs%2Fpull%2F2%2Fmerge)
+
+# About
+
+This is 1 of 3 repositories that facilitates the generation of design system instances.
 
 ## Development server
 
@@ -28,10 +34,9 @@ To get more help on the Angular CLI use `ng help` or go check out the [Angular C
 
 ## Creating NPM Packages
 
-* Run the command `npm run build:ds` to build the design system, this will create a dist folder, in package.json in dist folder change the name and the version of it accordingly.
-* Go into dist directory using command `cd dist`.
-* Pack the distribution directory using `npm pack` as an archive to upload.
-* Publish the library using `npm publish`.
+- Run the command `npm run build:ds` to build the design system, this will create a dist folder, in package.json in dist folder change the name and the version of it accordingly.
+- Go into dist directory using command `cd dist`.
+- Pack the distribution directory using `npm pack` as an archive to upload.
+- Publish the library using `npm publish`.
 
 > You would have to do `npm login` to publish the library. If you have an account put your login information or, you can create one at <https://www.npmjs.com> for free.
-  
