@@ -26,47 +26,48 @@ jobs:
     steps:
       - task: NodeTool@0
         inputs:
-          versionSpec: "14.x"
-        displayName: "Install Node"
+          versionSpec: '14.x'
+        displayName: 'Install Node'
 
       - task: Bash@3
-        displayName: "Install, Lint and Test"
+        displayName: 'Install, Lint and Test'
         inputs:
-          targetType: "inline"
+          targetType: 'inline'
           script: |
             npm ci --ignore-scripts
             npm run lint
             npm run test
 
       - task: Bash@3
-        displayName: "Generate .npmrc"
+        displayName: 'Generate .npmrc'
         env:
           PERSONAL_ACCESS_TOKEN: $(personalAccessToken)
           FEED_NAME: $(feedName)
           $ORG_NAME: $(orgName)
         inputs:
-          targetType: "inline"
+          targetType: 'inline'
           script: |
             chmod +x ./npmrc.sh
             ./npmrc.sh
 
       - task: npmAuthenticate@0
-        displayName: "Authenticate with npm"
+        displayName: 'Authenticate with npm'
         inputs:
           workingFile: .npmrc
           customEndpoint: azureSubscription
 
       - task: Bash@3
-        displayName: "Build and package design system"
+        displayName: 'Build and package design system'
         inputs:
-          targetType: "inline"
+          targetType: 'inline'
           script: |
             npm run build:ds
             cd dist/ds
             npm pack
+            ls
 
-      - publish: $(System.DefaultWorkingDirectory)
-        displayName: "Publish to pipeline artifact dir"
-        artifact: "**/*.tgz"
-
-      - script: npm publish
+      - task: Npm@1
+        inputs:
+          command: publish
+          publishRegistry: useFeed
+          publishFeed: $(projectName)/$(feedName)
