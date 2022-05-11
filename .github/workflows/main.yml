@@ -22,12 +22,6 @@ jobs:
 
     # Steps represent a sequence of tasks that will be executed as part of the job
     steps:
-      # Checks-out your repository under $GITHUB_WORKSPACE, so your job can access it
-      - uses: actions/checkout@v2
-        with:
-          fetch-depth: 0 # 👈 Required to retrieve git history
-      - uses: actions/checkout@v3
-
       - name: Setup node
         id: setup
         uses: actions/setup-node@v3
@@ -35,11 +29,14 @@ jobs:
           node-version: 14
           cache: "npm"
           cache-dependency-path: "**/package-lock.json"
-      - run: npm ci
-
+        run: npm ci
       - run: npm run build
 
-      - run: npm run test --collect-coverage
+      - name: Test
+        id: test
+        run: npm run test
+        # Collects test coverage from design system project
+      - run: npm run test:ds --collect-coverage
 
         # 👇 Adds Chromatic as a step in the workflow
       - name: Publish to Chromatic
