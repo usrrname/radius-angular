@@ -16,8 +16,8 @@ variables:
     value: $[variables.ORG_NAME]
   - name: GitHubToken
     value: $[variables.GH_TOKEN]
-  - name: npm_config_cache
-    value: $(Pipeline.Workspace)/.npm
+  - name: npmToken
+    value: $[variables.NPM_TOKEN]
 
 jobs:
   - job: install_build_publish
@@ -43,7 +43,8 @@ jobs:
         env:
           PERSONAL_ACCESS_TOKEN: $(personalAccessToken)
           FEED_NAME: $(feedName)
-          $ORG_NAME: $(orgName)
+          ORG_NAME: $(orgName)
+          NPM_TOKEN: $(npmToken)
         inputs:
           targetType: 'inline'
           script: |
@@ -62,12 +63,23 @@ jobs:
           targetType: 'inline'
           script: |
             npm run build:ds
-            cd dist/ds
+            cd dist
             npm pack
-            ls
+            npm publish
 
+      # publish to azure devops registry
       - task: Npm@1
+        displayName: 'Publish to Azure Devops org artifact registry'
         inputs:
           command: publish
           publishRegistry: useFeed
           publishFeed: $(projectName)/$(feedName)
+          workingDir: dist
+
+      # publish to external npm registry
+      - task: Npm@1
+        displayName: 'Publish to npm registry'
+        inputs:
+          workingDir: dist
+          command: publish
+          customRegistry: useNpmrc
