@@ -18,22 +18,29 @@ steps:
     inputs:
       versionSpec: "14.x"
     displayName: "Install Node"
-  - task: Cache@2
-    displayName: "Install and cache packages"
-    inputs:
-      key: 'npm | "$(Agent.OS)" | package-lock.json'
-      restoreKeys: |
-        npm | "$(Agent.OS)"
-      path: $(npm_config_cache)
-  - script: npm ci
+
+  - script: npm ci --ignore-script
     condition: ne(variables.CACHE_RESTORED, 'true')
     displayName: "cache exists; Node clean install"
-  - script: |
-      npm run lint
-      npm run test
-    displayName: "lint and test"
+
+  - task: Bash@3
+    displayName: "Lint and Test"
+    inputs:
+      targetType: "inline"
+      script: |
+        npm run lint
+        npm run test
+
+  - task: Bash@3
+    displayName: "Dry run of packaging"
+    inputs:
+      targetType: "inline"
+      script: |
+        npm run build:ds
+        cd dist/ds
+        npm pack --dry-run
   - task: CmdLine@2
     displayName: Publish to Chromatic
     inputs:
       # Runs Chromatic
-      script: npx chromatic --project-token=${CHROMATIC_PROJECT_TOKEN} --exit-zero-on-changes
+      script: npx chromatic --project-token=$(CHROMATIC_PROJECT_TOKEN) --exit-zero-on-changes
