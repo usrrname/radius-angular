@@ -22,6 +22,9 @@ jobs:
 
     # Steps represent a sequence of tasks that will be executed as part of the job
     steps:
+      - uses: actions/checkout@v2
+        with:
+          fetch-depth: 0
       - name: Setup node
         id: setup
         uses: actions/setup-node@v3
@@ -44,17 +47,14 @@ jobs:
         run: npm run test:ds --collect-coverage
 
         # 👇 Adds Chromatic as a step in the workflow
-      - name: Checkout for Chromatic
-        uses: actions/checkout@v2
-        with:
-          fetch-depth: 0
+      - name: Chromatic
       - uses: chromaui/action@v1
         with:
           token: ${{ secrets.GITHUB_TOKEN }}
           # 👇 Chromatic projectToken, refer to the manage page to obtain it.
           projectToken: ${{ secrets.CHROMATIC_PROJECT_TOKEN }}
           exitZeroOnChanges: true # 👈 Option to prevent the workflow from failing
-
+          autoAcceptWithChanges: true
       # Publishes Storybook
       - name: Deploy to Netlify
         uses: nwtgck/actions-netlify@v1.2.3
