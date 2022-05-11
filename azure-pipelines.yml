@@ -84,10 +84,11 @@ jobs:
         displayName: "Install Node"
 
       - task: Bash@3
-        displayName: "Lint and Test"
+        displayName: "Install, Lint and Test"
         inputs:
           targetType: "inline"
           script: |
+            npm ci --ignore-scripts
             npm run lint
             npm run test
 
