@@ -39,8 +39,10 @@ jobs:
       - name: Test
         id: test
         run: npm run test
+
+      - name: Design System Test coverage
         # Collects test coverage from design system project
-      - run: npm run test:ds --collect-coverage
+        run: npm run test:ds --collect-coverage
 
         # 👇 Adds Chromatic as a step in the workflow
       - name: Publish to Chromatic
