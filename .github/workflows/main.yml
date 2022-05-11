@@ -6,12 +6,12 @@ name: Main
 on:
   # Triggers the workflow on push or pull request events but only for the main branch
   push:
-    branches: [main]
+    branches:
+      - main
+      - feature/github-actions
   pull_request:
     branches: [main]
-
-  # Allows you to run this workflow manually from the Actions tab
-  workflow_dispatch:
+  workflow_dispatch: # can be run manually from Actions tab
 
 # A workflow run is made up of one or more jobs that can run sequentially or in parallel
 jobs:
@@ -22,15 +22,19 @@ jobs:
 
     # Steps represent a sequence of tasks that will be executed as part of the job
     steps:
+      - uses: actions/checkout@v3
       - name: Setup node
         id: setup
         uses: actions/setup-node@v3
         with:
-          node-version: 14
+          node-version: 14.7.0
           cache: "npm"
+          always-auth: true
           cache-dependency-path: "**/package-lock.json"
-        run: npm ci
-      - run: npm run build
+
+      - run: |
+          npm ci 
+          npm run build
 
       - name: Test
         id: test
