@@ -23,7 +23,8 @@
     "test:ds:watch": "jest --config ./projects/ds/jest.config.js --passWithNoTests --watch",
     "docs:json": "compodoc -p ./tsconfig.json -e json -d .",
     "storybook": "npm run docs:json && start-storybook",
-    "chromatic": "chromatic --exit-zero-on-changes"
+    "chromatic": "chromatic --exit-zero-on-changes",
+    "prepare": "cp package.json dist"
   },
   "private": false,
   "dependencies": {
@@ -61,6 +62,7 @@
     "@types/jest": "27.4.1",
     "@types/node": "^17.0.21",
     "@typescript-eslint/eslint-plugin": "^5.14.0",
+    "@typescript-eslint/parser": "^5.23.0",
     "@webcomponents/custom-elements": "^1.5.0",
     "babel-loader": "^8.2.2",
     "chromatic": "^6.3.4",
@@ -81,6 +83,7 @@
     "postcss-loader": "6.2.1",
     "postcss-preset-env": "7.4.2",
     "postcss-scss": "^4.0.3",
+    "prettier": "^2.6.2",
     "storybook-design-token": "^1.4.0",
     "stylelint": "^14.5.3",
     "stylelint-config-prettier": "^9.0.3",

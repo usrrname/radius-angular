@@ -20,60 +20,6 @@ variables:
     value: $(Pipeline.Workspace)/.npm
 
 jobs:
-  # - job: install
-  #   pool:
-  #     vmImage: ubuntu-latest
-
-  #     steps:
-  #       - task: NodeTool@0
-  #         inputs:
-  #           versionSpec: "14.x"
-  #         displayName: "Install Node"
-
-  #       - task: Cache@2
-  #         displayName: "Cache npm packages"
-  #         inputs:
-  #           key: 'npm | "$(Agent.OS)" | package-lock.json'
-  #           restoreKeys: |
-  #             npm | "$(Agent.OS)"
-  #           path: $(npm_config_cache)
-
-  #       - task: Bash@3
-  #         displayName: "Show cache"
-  #         inputs:
-  #           targetType: "inline"
-  #           script: |
-  #             npm cache ls
-  #             npm cache verify
-
-  # - job: build
-  #   pool:
-  #     vmImage: ubuntu-latest
-  #     dependsOn: install
-  #     steps:
-
-  #       - task: Bash@3
-  #         displayName: "Cache exists - Clean install and lint"
-  #         inputs:
-  #           targetType: "inline"
-  #           script: |
-  #             npm ci --cache $(npm_config_cache)
-  #             npm run lint
-  #           condition: ne(variables.CACHE_RESTORED, 'true')
-
-  #       - script: npm run test:ds --collect-coverage
-  #         displayName: "Test"
-
-  #       - script: npm run build:ds
-  #         displayName: "Build design system package"
-
-  #       - bash: cd dist && npm pack
-  #         displayName: "Package for npm release"
-
-  #       - publish: $(System.DefaultWorkingDirectory)/npm
-  #         displayName: "Publish built package artifacts"
-  #         artifact: package.json
-
   - job: install_build_publish
     pool:
       vmImage: ubuntu-latest
@@ -105,11 +51,23 @@ jobs:
             ./npmrc.sh
 
       - task: npmAuthenticate@0
+        displayName: "Authenticate with npm"
         inputs:
           workingFile: .npmrc
           customEndpoint: azureSubscription
-      - script: npm run build && npm pack
-      - script: npm publish
 
-        # - publish: $(System.DefaultWorkingDirectory)/.npmrc
-        #   artifact: .npmrc
+      - task: Bash@3
+        displayName: "Build and package design system"
+        inputs:
+          targetType: "inline"
+          script: |
+            npm run build:ds
+            npm run prepare
+            cd dist
+            npm pack
+
+      - publish: $(System.DefaultWorkingDirectory)
+        displayName: "Publish to pipeline artifact dir"
+        artifact: "**/*.tgz"
+
+      - script: npm publish

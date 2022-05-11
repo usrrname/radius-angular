@@ -35,6 +35,7 @@ To get more help on the Angular CLI use `ng help` or go check out the [Angular C
 ## Creating NPM Packages
 
 - Run the command `npm run build:ds` to build the design system, this will create a dist folder, in package.json in dist folder change the name and the version of it accordingly.
+- Run `npm run prepare` which copies the `package.json` at the root of our project into the `dist` folder
 - Go into dist directory using command `cd dist`.
 - Pack the distribution directory using `npm pack` as an archive to upload.
 - Publish the library using `npm publish`.
