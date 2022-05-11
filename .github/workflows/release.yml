@@ -1,6 +1,7 @@
 # This is a package publishing workflow
 name: release package
 
+# only works on merge to main or creation of release branch
 on:
   push:
     branches:
