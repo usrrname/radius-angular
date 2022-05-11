@@ -62,8 +62,7 @@ jobs:
           targetType: "inline"
           script: |
             npm run build:ds
-            npm run prepare
-            cd dist
+            cd dist/ds
             npm pack
 
       - publish: $(System.DefaultWorkingDirectory)
