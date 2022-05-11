@@ -27,6 +27,7 @@ jobs:
         id: setup
         uses: actions/setup-node@v3
         with:
+          fetch-depth: 0
           node-version: 14
           cache: "npm"
           always-auth: true
@@ -47,7 +48,6 @@ jobs:
         # 👇 Adds Chromatic as a step in the workflow
       - name: Publish to Chromatic
         uses: chromaui/action@v1
-        # Chromatic GitHub Action options
         with:
           token: ${{ secrets.GITHUB_TOKEN }}
           # 👇 Chromatic projectToken, refer to the manage page to obtain it.
