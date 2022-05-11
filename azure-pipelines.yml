@@ -83,29 +83,13 @@ jobs:
           versionSpec: "14.x"
         displayName: "Install Node"
 
-      - task: Cache@2
-        displayName: "Cache npm packages"
-        inputs:
-          key: 'npm | "$(Agent.OS)" | package-lock.json'
-          restoreKeys: |
-            npm | "$(Agent.OS)"
-          path: $(npm_config_cache)
-
       - task: Bash@3
-        displayName: "Show cache"
+        displayName: "Lint and Test"
         inputs:
           targetType: "inline"
           script: |
-            npm cache ls
-            npm cache verify
-      - task: Bash@3
-        displayName: "Cache exists - Clean install and lint"
-        inputs:
-          targetType: "inline"
-          script: |
-            npm ci --cache $(npm_config_cache)
             npm run lint
-        condition: ne(variables.CACHE_RESTORED, 'true')
+            npm run test
 
       - task: Bash@3
         displayName: "Generate .npmrc"
