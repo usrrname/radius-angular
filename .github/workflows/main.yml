@@ -27,7 +27,7 @@ jobs:
         id: setup
         uses: actions/setup-node@v3
         with:
-          node-version: 14.7.0
+          node-version: 14
           cache: "npm"
           always-auth: true
           cache-dependency-path: "**/package-lock.json"
