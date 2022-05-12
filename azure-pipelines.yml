@@ -2,7 +2,6 @@
 
 trigger:
   - main
-  - feature/R20-22-azure-piplines
 
 variables:
   - group: radius-angular
@@ -24,6 +23,9 @@ jobs:
     pool:
       vmImage: ubuntu-latest
     steps:
+      - checkout: self
+        persistCredentials: true
+
       - task: NodeTool@0
         inputs:
           versionSpec: '14.x'
@@ -58,28 +60,20 @@ jobs:
           customEndpoint: azureSubscription
 
       - task: Bash@3
-        displayName: 'Build and package design system'
+        displayName: 'Build, pack and version design system'
         inputs:
           targetType: 'inline'
           script: |
             npm run build:ds
-            cd dist
+            cd dist/ds
+            npm --no-git-tag-version version patch
             npm pack
-            npm publish
 
-      # publish to azure devops registry
       - task: Npm@1
         displayName: 'Publish to Azure Devops org artifact registry'
         inputs:
           command: publish
           publishRegistry: useFeed
           publishFeed: $(projectName)/$(feedName)
-          workingDir: dist
-
-      # publish to external npm registry
-      - task: Npm@1
-        displayName: 'Publish to npm registry'
-        inputs:
-          workingDir: dist
-          command: publish
-          customRegistry: useNpmrc
+          workingDir: dist/ds
+        continueOnError: true
