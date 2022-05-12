@@ -2,8 +2,6 @@
 
 This project was generated with [Angular CLI](https://github.com/angular/angular-cli) version 12.0.3.
 
-[![Build Status](https://dev.azure.com/radius2/radius-azure/_apis/build/status/usrrname.radius-angular?branchName=refs%2Fpull%2F2%2Fmerge)](https://dev.azure.com/radius2/radius-azure/_build/latest?definitionId=1&branchName=refs%2Fpull%2F2%2Fmerge)
-
 # About
 
 This is 1 of 3 repositories that facilitates the generation of design system instances.
@@ -95,12 +93,14 @@ To help with local development, change your `package.json` to include the follow
 }
 ```
 
+Run `verdaccio`, `npm publish`, then `npm install <your-package-name>` in a new project to check the latest published version can be imported.
+
 ## Creating NPM Packages
 
 - Run the command `npm run build:ds` to build the design system, this will create a dist folder, in package.json in dist folder change the name and the version of it accordingly.
 - Go into dist directory using command `cd dist/ds`.
 - Pack the distribution directory using `npm pack` as an archive to upload.
-  Note: the `package.json` within the selected `ds` project should contain updated versioning, author and repo details.
+  Note: the `package.json` within the selected `ds` project should contain updated package name, versioning, author and repo details.
 - Publish the library using `npm publish`.
 
 > You would have to do `npm login` to publish the library. If you have an account put your login information or, you can create one at <https://www.npmjs.com> for free.

@@ -1,4 +1,4 @@
-# Ds
+# DS - Radius Angular Design System Starter
 
 This starter component library was generated with [Angular CLI](https://github.com/angular/angular-cli) version 12.0.5.
 
