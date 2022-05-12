@@ -4,7 +4,7 @@ trigger: none
 # Environment variables
 variables:
   - group: radius-angular
-  - name: CHROMATIC_PROJECT_TOKEN
+  - name: chromaticProjectToken
     value: $[variables.CHROMATIC_PROJECT_TOKEN]
 # triggers on pull requests against the following branches
 pr:
@@ -14,6 +14,10 @@ pool:
   vmImage: ubuntu-latest
 
 steps:
+  - checkout: self
+    persistCredentials: true
+    clean: true
+
   - task: NodeTool@0
     inputs:
       versionSpec: "14.x"
@@ -39,8 +43,9 @@ steps:
         npm run build:ds
         cd dist/ds
         npm pack --dry-run
+
   - task: CmdLine@2
     displayName: Publish to Chromatic
     inputs:
       # Runs Chromatic
-      script: npx chromatic --project-token=$(CHROMATIC_PROJECT_TOKEN) --exit-zero-on-changes
+      script: npx chromatic --project-token=$(chromaticProjectToken) --exit-zero-on-changes
