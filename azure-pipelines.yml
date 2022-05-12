@@ -17,6 +17,8 @@ variables:
     value: $[variables.GH_TOKEN]
   - name: npmToken
     value: $[variables.NPM_TOKEN]
+  - name: chromaticProjectToken
+    value: $[variables.CHROMATIC_PROJECT_TOKEN]
 
 jobs:
   - job: install_build_publish
@@ -26,6 +28,7 @@ jobs:
       - checkout: self
         persistCredentials: true
         clean: true
+        fetchDepth: 0
 
       - task: NodeTool@0
         inputs:
@@ -61,13 +64,20 @@ jobs:
           customEndpoint: azureSubscription
 
       - task: Bash@3
+        displayName: 'Update version of package'
+        inputs:
+          targetType: 'inline'
+          script: |
+            cd $(Build.SourcesDirectory)/projects/ds
+            npm --no-git-tag-version version patch --force -m "Upgrade package to %s"
+
+      - task: Bash@3
         displayName: 'Build, pack and version design system'
         inputs:
           targetType: 'inline'
           script: |
             npm run build:ds
             cd dist/ds
-            npm --no-git-tag-version version patch
             npm pack
 
       - task: Npm@1
@@ -78,3 +88,9 @@ jobs:
           publishFeed: $(projectName)/$(feedName)
           workingDir: dist/ds
         continueOnError: true
+
+      - task: CmdLine@2
+        displayName: Publish to Chromatic
+        inputs:
+          # Runs Chromatic and accepts changes coming from approved PR
+          script: npx chromatic --project-token=$(chromaticProjectToken) --auto-accept-changes
