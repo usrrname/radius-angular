@@ -25,6 +25,7 @@ jobs:
     steps:
       - checkout: self
         persistCredentials: true
+        clean: true
 
       - task: NodeTool@0
         inputs:
