@@ -17,7 +17,8 @@ See also:
 
 ```
 .
-├── .github/workflows
+├── .github                    <-- github actions ymls
+├── .azure-devops              <-- azure devops ymls
 ├── .storybook                 <-- storybook config files
 ├── coverage
 ├── dist                       <-- all builds from this Angular workspace end up in here
